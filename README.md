@@ -25,7 +25,11 @@ Please buy my wife a coffee to keep her happy, while I am busy developing Node-R
 
 ## Node usage
 
-This node can be used for example to cleanup daily the video recordings of an IP camera after a month, to ensure the disk doesn't run full.  The following example flow will remove daily the video footage that is at least one month old:
+This node can be used for example to cleanup daily the video recordings of an IP camera after a month, to ensure the disk doesn't run full.  
+
+![image](https://github.com/bartbutenaers/node-red-cleanup-filesystem/assets/14224149/b179c80e-650d-4674-b84a-8e5a9f7c9288)
+
+The following example flow will remove daily the video footage that is at least one month old:
 
 ![image](https://github.com/bartbutenaers/node-red-cleanup-filesystem/assets/14224149/681b5dfc-e1f9-44d3-8ee6-62d02456e9f9)
 ```
