@@ -1,6 +1,8 @@
 # @bartbutenaers/node-red-cleanup-filesystem
 A Node-RED node to cleanup files and folders in the filesystem
 
+Note that this node has ***not*** been tested for large amounts of files and folders, since I don't need it for that purpose.  I assume it will be to slow for those cases.
+
 ## Installation
 
 Since this node is in an experimental phase, it is ***not*** available on NPM yet.  So not available in the palette!
@@ -21,6 +23,34 @@ Please buy my wife a coffee to keep her happy, while I am busy developing Node-R
 
 ***CAUTION: this software is distributed under the Apache License Version 2.0 on an “AS IS” BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied!  Use it at your own risk!***
 
+## Node usage
+
+This node can be used for example to cleanup daily the video recordings of an IP camera after a month, to ensure the disk doesn't run full.  The following example flow will remove daily the video footage that is at least one month old:
+
+![image](https://github.com/bartbutenaers/node-red-cleanup-filesystem/assets/14224149/681b5dfc-e1f9-44d3-8ee6-62d02456e9f9)
+```
+[{"id":"c81e29b99519872f","type":"debug","z":"bfe334aca9927858","name":"Rapport opkuis","active":true,"tosidebar":true,"console":false,"tostatus":false,"complete":"payload","targetType":"msg","statusVal":"","statusType":"auto","x":1440,"y":520,"wires":[]},{"id":"475ba3d23cb92067","type":"inject","z":"bfe334aca9927858","name":"Daily","props":[{"p":"payload"}],"repeat":"86400","crontab":"","once":false,"onceDelay":0.1,"topic":"","payload":"","payloadType":"date","x":1050,"y":520,"wires":[["cd06d7ec1ab9956b"]]},{"id":"cd06d7ec1ab9956b","type":"cleanup-filesystem","z":"bfe334aca9927858","name":"","baseFolder":"/media/reolink_deurbel","fileNamePattern":".*","folderNamePattern":".*","age":"36","ageUnit":"hours","removeEmptyFolders":true,"dryRun":false,"report":true,"x":1230,"y":520,"wires":[["c81e29b99519872f"]],"info":""}]
+```
+It is advised to do a ***dry-run*** first to make sure that the correct files and folders are being deleted!  That setting allows you to play with the other settings until the list of files and folders in the output message `payload.report` is correct. Because due to incorrect settings (or perhaps a bug in this node) important files or folders might be removed by accident.  Of course a dry-run only makes sense to be used in combination with the ***report*** setting:
+
+![image](https://github.com/bartbutenaers/node-red-cleanup-filesystem/assets/14224149/7263cd81-8458-47ed-963c-a047ffbfa7ba)
+
+The *deletedFiles* and *deletedFolder* will always be zero in the report while doing a dry-run, because it reports the number of files and folders that are truly removed.
+
+Optionally every property can also be overwritten via the input message payload:
+```
+{
+    "baseFolder": "/media/reolink_doorbell",
+    "fileNamePatterns": ".*",
+    "folderNamePatterns": ".*",
+    "age": 1,
+    "ageUnit": "months",
+    "removeEmptyFolders": true,
+    "dryRun": true,
+    "report": true
+}
+```
+
 ## Node properties
 
 The following properties are mandatory, so they should be specified in the config screen or in the input message.
@@ -39,7 +69,7 @@ This is a (`;` separated) string containing one or more regex expressions, each 
 
 ### Age
 
-Represents the age of files to be removed. It should be a positive integer. Files older than this age will be removed by this node.  The value from the config screen can be overwritten via `payload.ago` in the input message.
+Represents the age of files to be removed. It should be a positive integer. Files older than this age will be removed by this node.  The value from the config screen can be overwritten via `payload.age` in the input message.
 
 ### Age unit
 
