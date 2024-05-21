@@ -73,13 +73,12 @@
 
 <script type="text/html" data-help-name="cleanup-filesystem">
     <p>A Node-RED node that deletes files older than a specified age from a given folder structure.</p>
-    <p><strong>Base folder:</strong><br/>The 'baseFolder' parameter represents the root directory where the node starts its operations. It should be a valid path on your system.</p>
-    <p><strong>fileNamePatterns:</strong><br/>The 'fileNamePatterns' parameter is a (';' separated) of regex patterns that file names should match. The node will only process files whose names match one of these patterns.</p>
-    <p><strong>folderNamePatterns:</strong><br/>The 'folderNamePatterns' parameter is a (';' separated) of regex patterns that folder names should match. The node will only process folders whose names match one of these patterns.</p>
-    <p><strong>age:</strong><br/>The 'age' parameter represents the age of files to be processed. It should be a positive integer. Files older than this age will be processed by the node.</p>
-    <p><strong>ageUnit:</strong><br/>The 'ageUnit' parameter represents the unit of 'age'. It should be one of the following strings: 'seconds', 'minutes', 'hours', 'days', 'weeks', 'months', or 'years'. The node will calculate the age of files based on this unit.</p>
-    <p><strong>Remove empty folders:</strong><br/>The 'removeEmptyFolders' parameter is a boolean that determines whether the node should remove empty folders after processing. If set to tr>
-    <p><strong>Do a test run:</strong><br/>The 'dryRun' parameter is a boolean to specify whether the node should do a test run, to report files that would be deleted (without actually deleting them).</p>
-    <p><strong>Report files and folders:</strong><br/>The 'report' parameter is a boolean to specify whether the path of the (to be) deleted files and folders will be send in the output 'msg.payload.report'.</p>
+    <p><strong>Base folder:</strong><br/>The root directory where the node starts its operations. It should be a valid path on your system.</p>
+    <p><strong>Filename:</strong><br/> Files with a name matching this regex pattern will be removed.  Use <code>.*</code> for all files.  Multiple regex patterns can be entered <code>;</code> separated.</p>
+    <p><strong>Foldername:</strong><br/> Folders with a name matching this regex pattern will be removed.  Use <code>.*</code> for all folders.  Multiple regex patterns can be entered <code>;</code> separated.</p>
+    <p><strong>Age:</strong><br/> Files older than this age will be removed.</p>
+    <p><strong>Subfolders:</strong><br/> When selected, empty subfolders will be removed.</p>
+    <p><strong>Dry run:</strong><br/> When selected, a test run will be executed without removing files or folders.</p>
+    <p><strong>Report:</strong><br/> When selected, the paths of the (to be) deleted files and folders will be send in the output <code>payload.report</code>.</p>
     <p>Please ensure to specify all these parameters either in the config screen or in the input message payload.</p>
 </script>
