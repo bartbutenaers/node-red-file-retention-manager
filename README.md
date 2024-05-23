@@ -74,6 +74,14 @@ The value from the config screen can be overwritten via `payload.fileNamePattern
 Folders with a (full path folder) name matching this regex pattern will be removed.  Use `.*` for all folders.  Multiple regex patterns can be entered `;` separated.
 The value from the config screen can be overwritten via `payload.folderNamePatterns` in the input message.
 
+For example let's assume the following folder structure, to store recordings from a Reolink doorbell per day:
+
+![image](https://github.com/bartbutenaers/node-red-cleanup-filesystem/assets/14224149/7eecc6cb-2777-42ef-811e-9742db72ce61)
+
+When using the folder name pattern `2024.*22`, then only the folders for the 22th of every month in 2024 will be removed:
+
+![image](https://github.com/bartbutenaers/node-red-cleanup-filesystem/assets/14224149/15932290-da06-4a1a-9cec-434df5e3450f)
+
 ### Age
 
 Files older than this age will be removed.
