@@ -35,9 +35,13 @@ The following example flow will remove daily the video footage that is at least 
 ```
 [{"id":"c81e29b99519872f","type":"debug","z":"bfe334aca9927858","name":"Rapport opkuis","active":true,"tosidebar":true,"console":false,"tostatus":false,"complete":"payload","targetType":"msg","statusVal":"","statusType":"auto","x":1440,"y":520,"wires":[]},{"id":"475ba3d23cb92067","type":"inject","z":"bfe334aca9927858","name":"Daily","props":[{"p":"payload"}],"repeat":"86400","crontab":"","once":false,"onceDelay":0.1,"topic":"","payload":"","payloadType":"date","x":1050,"y":520,"wires":[["cd06d7ec1ab9956b"]]},{"id":"cd06d7ec1ab9956b","type":"cleanup-filesystem","z":"bfe334aca9927858","name":"","baseFolder":"/media/reolink_deurbel","fileNamePattern":".*","folderNamePattern":".*","age":"36","ageUnit":"hours","removeEmptyFolders":true,"dryRun":false,"report":true,"x":1230,"y":520,"wires":[["c81e29b99519872f"]],"info":""}]
 ```
-It is advised to do a ***dry-run*** first to make sure that the correct files and folders are being deleted!  That setting allows you to play with the other settings until the list of files and folders in the output message `payload.report` is correct. Because due to incorrect settings (or perhaps a bug in this node) important files or folders might be removed by accident.  Of course a dry-run only makes sense to be used in combination with the ***report*** setting:
+It is advised to do a ***dry-run*** first to make sure that the correct files and folders are being deleted!  That setting allows you to play with the other settings until the list of files and folders in the output message `payload.report` is correct. Because due to incorrect settings (or perhaps a bug in this node) important files or folders might be removed by accident.  Of course a dry-run only makes sense to be used in combination with the ***report*** setting.
+
+The report shows the (to be) deleted files and folders:
 
 ![image](https://github.com/bartbutenaers/node-red-cleanup-filesystem/assets/14224149/7263cd81-8458-47ed-963c-a047ffbfa7ba)
+
+When the option *"Remove empty subfolders"* is not selected, no folders will end up in the report (because no folders will be removed).
 
 The *deletedFiles* and *deletedFolder* will always be zero in the report while doing a dry-run, because it reports the number of files and folders that are truly removed.
 
