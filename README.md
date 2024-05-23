@@ -61,19 +61,23 @@ The following properties are mandatory, so they should be specified in the confi
 
 ### Base folder
 
-This is the folder where the node starts the cleanup operation, which should be a valid path on your system.  Make sure this path is correct, to avoid data loss inside important files!  The value from the config screen can be overwritten via `payload.baseFolder` in the input message.
+This is the folder where the node starts the cleanup operation, which should be a valid path on your system.  Make sure this path is correct, to avoid data loss inside important files!  
+The value from the config screen can be overwritten via `payload.baseFolder` in the input message.
 
 ### Filename patterns
 
-This is a (`;` separated) string containing one or more regex expressions, each representing a pattern that file names should match. The node will only cleanup files whose names match one of these patterns.  The value from the config screen can be overwritten via `payload.fileNamePatterns` in the input message.
+Files with a name matching this regex pattern will be removed.  Use `.*` for all files.  Multiple regex patterns can be entered `;` separated, for example `.*mp4;.*jpg` to remove only files with extension "mp4" or "jpg".  
+The value from the config screen can be overwritten via `payload.fileNamePatterns` in the input message.
 
 ### Foldername patterns
 
-This is a (`;` separated) string containing one or more regex expressions, each representing a pattern that folder names should match. The node will only cleanup folders whose names match one of these patterns.  The value from the config screen can be overwritten via `payload.folderNamePatterns` in the input message.
+Folders with a (full path folder) name matching this regex pattern will be removed.  Use `.*` for all folders.  Multiple regex patterns can be entered `;` separated.
+The value from the config screen can be overwritten via `payload.folderNamePatterns` in the input message.
 
 ### Age
 
-Represents the age of files to be removed. It should be a positive integer. Files older than this age will be removed by this node.  The value from the config screen can be overwritten via `payload.age` in the input message.
+Files older than this age will be removed.
+The value from the config screen can be overwritten via `payload.age` in the input message.
 
 ### Age unit
 
@@ -81,12 +85,15 @@ Represents the unit of 'age', which will be used to calculate the age of files. 
 
 ### Remove empty folders
 
-When `true` this node will remove empty subfolders after processing.  Even in dry-run mode, there will be simulation to consider files that 'would' be removed as removed files, in order to determine whether a folder 'would' become empty.  The value from the config screen can be overwritten via `payload.removeEmptyFolders` in the input message.
+When selected, empty subfolders will be removed.  Even in dry-run mode, there will be simulation to consider files that 'would' be removed as removed files, in order to determine whether a folder 'would' become empty.  
+The value from the config screen can be overwritten via `payload.removeEmptyFolders` in the input message.
 
 ### Do a test run
 
-When `true` the node will execute a test run, without actually removing files or folders.  That is of course only useful when the *"Report files and folders"* option is activated.  The value from the config screen can be overwritten via `payload.dryRun` in the input message.
+When selected, a test run will be executed without removing files or folders.  That is of course only useful when the *"Report files and folders"* option is activated.  
+The value from the config screen can be overwritten via `payload.dryRun` in the input message.
 
 ### Report files and folders
 
-When `true`will send the the path of the deleted files and folders in the output message inside `payload.report`.  The value from the config screen can be overwritten via `payload.report` in the input message.
+ When selected, the paths of the (to be) deleted files and folders will be send in the output `payload.report`.
+ The value from the config screen can be overwritten via `payload.report` in the input message.
