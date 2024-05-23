@@ -138,8 +138,11 @@ module.exports = function(RED) {
                             const stats = await fs.stat(filePath)
 
                             if (stats.isDirectory()) {
-                                if (folderNamePattern.some(pattern => new RegExp(pattern).test(path.basename(filePath)))) {
-                                    await walkDir(filePath)
+                                // Do a dept-first traversal, i.e. always descend into directories to allow full path filtering
+                                await walkDir(filePath)
+
+                                // Check the regex of the full folder name
+                                if (folderNamePattern.some(pattern => new RegExp(pattern).test(filePath))) {
                                     // Check if the folder is empty considering also the files that would have been deleted
                                     const isEmpty = (await fs.readdir(filePath)).every(file => reportContent.files.includes(path.join(filePath, file)))
                                     if (removeEmptyFolders && isEmpty) {
@@ -153,7 +156,8 @@ module.exports = function(RED) {
                                         }
                                     }
                                 }
-                            } else {
+                            } else if (folderNamePattern.some(pattern => new RegExp(pattern).test(path.dirname(filePath)))) {
+                                // Only delete files if their parent directory matches the folderNamePattern
                                 await deleteIfOld(filePath)
                             }
                         } catch (err) {
