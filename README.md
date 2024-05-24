@@ -1,7 +1,9 @@
 # @bartbutenaers/node-red-cleanup-filesystem
 A Node-RED node to cleanup files and folders in the filesystem
 
-Note that this node has ***not*** been tested for large amounts of files and folders, since I don't need it for that purpose.  I assume it will be to slow for those cases.
+Thanks to [zenofmud](https://discourse.nodered.org/u/zenofmud/summary) to assist me by testing this node more in depth!
+
+Note that this node has ***not*** been designed for large amounts of files and folders, since I don't need it for that purpose.  I assume it will be to slow for those cases.
 
 ## Installation
 
