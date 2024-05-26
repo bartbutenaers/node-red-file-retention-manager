@@ -1,7 +1,7 @@
 {
-    "name": "@bartbutenaers/node-red-cleanup-filesystem",
+    "name": "@bartbutenaers/node-red-file-retention-manager",
     "version": "1.0.0",
-    "description": "A Node-RED node to cleanup files and folders in the filesystem",
+    "description": "A Node-RED node to cleanup files (and folders) which have reached a specified age",
     "keywords": [
         "node-red",
         "filesystem",
@@ -16,9 +16,13 @@
     "dependencies": [
         "glob-to-regexp": "^0.4.1"
     ],
+    "bugs": {
+        "url": "https://github.com/bartbutenaers/node-red-file-retention-manager/issues"
+    },
+    "homepage": "https://github.com/bartbutenaers/node-red-file-retention-managerg",
     "repository": {
         "type": "git",
-        "url": "https://github.com/bartbutenaers/node-red-cleanup-filesystem.git"
+        "url": "https://github.com/bartbutenaers/node-red-file-retention-manager.git"
     },
     "license": "Apache-2.0",
     "author": {
@@ -27,7 +31,7 @@
     },
     "node-red"     : {
         "nodes": {
-            "cleanup-filesystem": "cleanup_fs.js"
+            "file-retention-manager": "cleanup_fs.js"
         }
     }
 }
