@@ -9,7 +9,12 @@
         "remove",
         "cleanup",
         "files",
-        "folders"
+        "folders",
+        "age",
+        "retention"
+    ],
+    "dependencies": [
+        "glob-to-regexp": "^0.4.1"
     ],
     "repository": {
         "type": "git",
