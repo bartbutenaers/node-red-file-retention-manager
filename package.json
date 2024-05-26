@@ -13,9 +13,9 @@
         "age",
         "retention"
     ],
-    "dependencies": [
+    "dependencies": {
         "glob-to-regexp": "^0.4.1"
-    ],
+    },
     "bugs": {
         "url": "https://github.com/bartbutenaers/node-red-file-retention-manager/issues"
     },
