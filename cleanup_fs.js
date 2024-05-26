@@ -58,7 +58,7 @@ module.exports = function(RED) {
                 if (msg.payload.report !== undefined) {
                     report = msg.payload.report
                 }
-                if (msg.payload.patterns !== undefined || msg.payload.pattern.length == 0) {
+                if (msg.payload.patterns !== undefined && Array.isArray(msg.payload.patterns) && msg.payload.patterns.length > 0) {
                     patterns = msg.payload.patterns
                 }
             }
