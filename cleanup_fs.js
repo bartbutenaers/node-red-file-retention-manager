@@ -134,7 +134,8 @@ module.exports = function(RED) {
                                     const now = new Date().getTime()
                                     const fileAge = (now - stats.mtime) / 1000
 
-                                    if (fileAge > ageInSeconds && patterns.some(pattern => pattern.test(filePath))) {
+                                    // Note: wrap the pattern in a RexExp instance, because the specified patterns e.g. don't always look like /.../
+                                    if (fileAge > ageInSeconds && patterns.some(pattern => new RegExp(pattern).test(filePath))) {
                                         reportContent.files.push(filePath)
 
                                         if (!dryRun) {
