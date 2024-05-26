@@ -1,17 +1,17 @@
 <script type="text/javascript">
     RED.nodes.registerType('cleanup-filesystem', {
-        category: 'function',
+        category: 'filesystem',
         color: '#a6bbcf',
         defaults: {
             name: {value: ""},
             baseFolder: {value: ""},
-            fileNamePattern: {value: ".*"},
-            folderNamePattern: {value: ".*"},
+            patternType: {value: "glob"},
             age: {value: ""},
             ageUnit: {value: "minutes"},
             removeEmptyFolders: {value: false},
             dryRun: {value: true},
-            report: {value: false}
+            report: {value: false},
+            patterns: {value: ["**/*"]}
         },
         inputs: 1,
         outputs: 1,
@@ -20,9 +20,48 @@
             return this.name || "Cleanup filesystem";
         },
         oneditprepare: function() {
-            // Custom logic goes here
+            let node = this
+debugger
+            let patternsList = $("#node-input-patterns-container").css('min-height','200px').editableList({
+                header: $("<div>").css('padding-left','32px').append($.parseHTML(
+                    "<div style='width:80%; display:inline-grid; margin-left:5px; margin-right:5px'><b>State</b></div>" )),
+                addItem: function(container, i, pattern) {
+                    // When the 'add' button is clicked, pattern will contain {} instead of ''
+                    if (Object.keys(pattern).length === 0 && pattern.constructor === Object) {
+                        pattern = ''
+                    }
+
+                    // Add a new row to the editableList
+                    let row = $('<div/>').appendTo(container)
+
+                    // Column 1
+                    let patternField = $('<input/>',{class:"node-input-pattern",type:"text"}).css({"width":"80%","margin-left":"5px","margin-right":"5px"}).appendTo(row)
+                    patternField.val(pattern)
+                },
+                removable: true,
+                sortable:true
+            })
+
+            // Show all the patterns (stored in this node) into the editableList
+            if (this.patterns) {
+                this.patterns.forEach(function(pattern, index) {
+                    patternsList.editableList('addItem', pattern)
+                })
+            }
+
+        },
+        oneditsave: function() {
+            let node = this
+
+            // Copy all the patterns from the editableList to this node
+            node.patterns = []
+            let patternsList = $("#node-input-patterns-container").editableList('items')
+            patternsList.each(function(i) {
+                let pattern = $(this)
+                node.patterns.push(pattern.find(".node-input-pattern").val())
+            })
         }
-    });
+    })
 </script>
 
 <script type="text/html" data-template-name="cleanup-filesystem">
@@ -35,12 +74,11 @@
         <input type="text" id="node-input-baseFolder" placeholder="Base Folder">
     </div>
     <div class="form-row">
-        <label for="node-input-fileNamePattern"><i class="fa fa-file"></i> Filename</label>
-        <input type="text" id="node-input-fileNamePattern" placeholder="File Name Patterns (semicolon separated)">
-    </div>
-    <div class="form-row">
-        <label for="node-input-folderNamePattern"><i class="fa fa-folder"></i> Foldername</label>
-        <input type="text" id="node-input-folderNamePattern" placeholder="Folder Name Patterns (semicolon separated)">
+        <label for="node-input-patternType"><i class="fa fa-hashtag"></i> Pattern Type</label>
+        <select id="node-input-patternType" style="width:70%;">
+            <option value="regex">Regex</option>
+            <option value="glob">Glob</option>
+        </select>
     </div>
     <div class="form-row">
         <label for="node-input-age"><i class="fa fa-clock-o"></i> Age</label>
@@ -69,16 +107,21 @@
         <input type="checkbox" id="node-input-report" style="width:auto ;border:none; vertical-align:baseline;">
         <span for="node-input-report"> Report files and folders (in output msg)</span>
     </div>
+    <div class="form-row">
+        <label for="node-input-patterns-container"><i class="fa fa-list"></i> Patterns</label>
+        <!-- Table with file path patterns -->
+        <ol id="node-input-patterns-container"></ol>
+    </div>
 </script>
 
 <script type="text/html" data-help-name="cleanup-filesystem">
     <p>A Node-RED node that deletes files older than a specified age from a given folder structure.</p>
     <p><strong>Base folder:</strong><br/>The root directory where the node starts its operations. It should be a valid path on your system.</p>
-    <p><strong>Filename:</strong><br/> Files with a name matching this regex pattern will be removed.  Use <code>.*</code> for all files.  Multiple regex patterns can be entered <code>;</code> separated.</p>
-    <p><strong>Foldername:</strong><br/> Folders with a name matching this regex pattern will be removed.  Use <code>.*</code> for all folders.  Multiple regex patterns can be entered <code>;</code> separated.</p>
+    <p><strong>Pattern Type:</strong><br/> The type of patterns to use, which can be a regular expressions glob patterns.</p>
     <p><strong>Age:</strong><br/> Files older than this age will be removed.</p>
     <p><strong>Subfolders:</strong><br/> When selected, empty subfolders will be removed.</p>
     <p><strong>Dry run:</strong><br/> When selected, a test run will be executed without removing files or folders.</p>
     <p><strong>Report:</strong><br/> When selected, the paths of the (to be) deleted files and folders will be send in the output <code>payload.report</code>.</p>
+    <p><strong>Patters:</strong><br/> Glob/regex patterns to specify which files need to be removed.</p>
     <p>Please ensure to specify all these parameters either in the config screen or in the input message payload.</p>
 </script>
