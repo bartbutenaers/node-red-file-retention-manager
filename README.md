@@ -1,9 +1,9 @@
 # @bartbutenaers/node-red-cleanup-filesystem
-A Node-RED node to cleanup files and folders in the filesystem
+A Node-RED node to cleanup files (and folders) which have reached a specified age.
 
 Thanks to [zenofmud](https://discourse.nodered.org/u/zenofmud/summary) to assist me by testing this node more in depth!
 
-Note that this node has ***not*** been designed for large amounts of files and folders, since I don't need it for that purpose.  I assume it will be to slow for those cases.
+Note that this node has ***not*** been designed for large amounts of files, since I don't need it myself for that purpose.  I assume it will be to slow for those cases.
 
 ## Installation
 
@@ -35,9 +35,9 @@ The following example flow will remove daily the video footage that is at least 
 
 ![image](https://github.com/bartbutenaers/node-red-cleanup-filesystem/assets/14224149/681b5dfc-e1f9-44d3-8ee6-62d02456e9f9)
 ```
-[{"id":"c81e29b99519872f","type":"debug","z":"bfe334aca9927858","name":"Rapport opkuis","active":true,"tosidebar":true,"console":false,"tostatus":false,"complete":"payload","targetType":"msg","statusVal":"","statusType":"auto","x":1440,"y":520,"wires":[]},{"id":"475ba3d23cb92067","type":"inject","z":"bfe334aca9927858","name":"Daily","props":[{"p":"payload"}],"repeat":"86400","crontab":"","once":false,"onceDelay":0.1,"topic":"","payload":"","payloadType":"date","x":1050,"y":520,"wires":[["cd06d7ec1ab9956b"]]},{"id":"cd06d7ec1ab9956b","type":"cleanup-filesystem","z":"bfe334aca9927858","name":"","baseFolder":"/media/reolink_deurbel","fileNamePattern":".*","folderNamePattern":".*","age":"36","ageUnit":"hours","removeEmptyFolders":true,"dryRun":false,"report":true,"x":1230,"y":520,"wires":[["c81e29b99519872f"]],"info":""}]
+[{"id":"a51d0f53ab1d49b5","type":"debug","z":"bfe334aca9927858","name":"Report cleanup","active":true,"tosidebar":true,"console":false,"tostatus":false,"complete":"payload","targetType":"msg","statusVal":"","statusType":"auto","x":860,"y":620,"wires":[]},{"id":"af30e4d327c72518","type":"inject","z":"bfe334aca9927858","name":"Monthly","props":[{"p":"payload"}],"repeat":"86400","crontab":"","once":false,"onceDelay":0.1,"topic":"","payload":"","payloadType":"date","x":440,"y":620,"wires":[["fbdb6c9bd4438cc8"]]},{"id":"fbdb6c9bd4438cc8","type":"cleanup-filesystem","z":"bfe334aca9927858","name":"","baseFolder":"/media/reolink_deurbel","patternType":"glob","age":"1","ageUnit":"months","removeEmptyFolders":true,"dryRun":true,"report":true,"patterns":["**/*.jpg","**/*.mp4"],"x":650,"y":620,"wires":[["a51d0f53ab1d49b5"]],"info":"We gaan dagelijks de opnames van de Reolink deurbel verwijderen die meer dan 1 maand oud zijn.\r\n\r\nBedoeling is om te zorgen dat het filesysteem niet vol loopt met oude opnames.  Deze opnames bestaan zowel uit mp4 video fragmenten, als uit jpeg snapshot afbeeldingen.\r\n\r\nDie opnames heeft de Reolink deurbel zelf gezet op de lokale folder /media/reolink_deurbel (via FTP).  De deurbel gaat zelf folders aanmaken met de volgende hierarchische structuur:\r\n```\r\n/media\r\n   /reolink_deurbel\r\n      /{jaar}\r\n         /{maand}\r\n            /{dag}\r\n               Reolink Video Doorbell Poe_00{jaar}{maand}{dag}{uur}{minuut}{seconde}.mp4\r\n               Reolink Video Doorbell Poe_00{jaar}{maand}{dag}{uur}{minuut}{seconde}.jpg\r\n```"}]
 ```
-It is advised to do a ***dry-run*** first to make sure that the correct files and folders are being deleted!  That setting allows you to play with the other settings until the list of files and folders in the output message `payload.report` is correct. Because due to incorrect settings (or perhaps a bug in this node) important files or folders might be removed by accident.  Of course a dry-run only makes sense to be used in combination with the ***report*** setting.
+It is advised to do a ***dry-run*** first to make sure that the correct files (and folders) are being deleted!  That setting allows you to play with the other settings until the list of files and folders in the output message `payload.report` is correct. Because due to incorrect settings (or perhaps a bug in this node) important files or folders might be removed by accident.  Of course a dry-run only makes sense to be used in combination with the ***report*** setting.
 
 The report shows the (to be) deleted files and folders:
 
@@ -51,13 +51,13 @@ Optionally every property can also be overwritten via the input message payload:
 ```
 {
     "baseFolder": "/media/reolink_doorbell",
-    "fileNamePatterns": ".*",
-    "folderNamePatterns": ".*",
     "age": 1,
     "ageUnit": "months",
     "removeEmptyFolders": true,
     "dryRun": true,
-    "report": true
+    "report": true,
+    "patternType": "glob",
+    "patterns": ["**/*.mp4", "**/*.jpg"]
 }
 ```
 
@@ -70,23 +70,9 @@ The following properties are mandatory, so they should be specified in the confi
 This is the folder where the node starts the cleanup operation, which should be a valid path on your system.  Make sure this path is correct, to avoid data loss inside important files!  
 The value from the config screen can be overwritten via `payload.baseFolder` in the input message.
 
-### Filename patterns
+### Pattern type
 
-Files with a name matching this regex pattern will be removed.  Use `.*` for all files.  Multiple regex patterns can be entered `;` separated, for example `.*mp4;.*jpg` to remove only files with extension "mp4" or "jpg".  
-The value from the config screen can be overwritten via `payload.fileNamePatterns` in the input message.
-
-### Foldername patterns
-
-Folders with a (full path folder) name matching this regex pattern will be removed.  Use `.*` for all folders.  Multiple regex patterns can be entered `;` separated.
-The value from the config screen can be overwritten via `payload.folderNamePatterns` in the input message.
-
-For example let's assume the following folder structure, to store recordings from a Reolink doorbell per day:
-
-![image](https://github.com/bartbutenaers/node-red-cleanup-filesystem/assets/14224149/7eecc6cb-2777-42ef-811e-9742db72ce61)
-
-When using the folder name pattern `2024.*22`, then only the folders for the 22th of every month in 2024 will be removed:
-
-![image](https://github.com/bartbutenaers/node-red-cleanup-filesystem/assets/14224149/15932290-da06-4a1a-9cec-434df5e3450f)
+The type of patterns to use, which can be a regular expressions or [glob pattern](https://code.visualstudio.com/docs/editor/glob-patterns).
 
 ### Age
 
@@ -111,3 +97,8 @@ The value from the config screen can be overwritten via `payload.dryRun` in the 
 
  When selected, the paths of the (to be) deleted files and folders will be send in the output `payload.report`.
  The value from the config screen can be overwritten via `payload.report` in the input message.
+
+### Patterns
+
+Files with a path matching this regex/glob pattern will be removed.  Use glob pattern `**/*` for all files in all folders.
+The value from the config screen can be overwritten via `payload.patterns` in the input message.
