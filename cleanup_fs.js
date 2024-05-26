@@ -3,8 +3,7 @@ module.exports = function(RED) {
     const path = require('path')
     const globToRegExp = require('glob-to-regexp')
 
-// TODO perhaps rename to file-retention-manager??
-    function cleanupFilesystem(config) {
+    function fileRetentionManager(config) {
         RED.nodes.createNode(this, config)
         let node = this
 
@@ -179,5 +178,5 @@ module.exports = function(RED) {
         })
     }
 
-    RED.nodes.registerType("cleanup-filesystem", cleanupFilesystem)
+    RED.nodes.registerType("file-retention-manager", fileRetentionManager)
 }
