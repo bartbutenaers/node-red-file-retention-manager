@@ -1,5 +1,5 @@
 <script type="text/javascript">
-    RED.nodes.registerType('cleanup-filesystem', {
+    RED.nodes.registerType('file-retention-manager', {
         category: 'filesystem',
         color: '#a6bbcf',
         defaults: {
@@ -64,7 +64,7 @@
     })
 </script>
 
-<script type="text/html" data-template-name="cleanup-filesystem">
+<script type="text/html" data-template-name="file-retention-manager">
     <div class="form-row">
         <label for="node-input-name"><i class="icon-tag"></i> Name</label>
         <input type="text" id="node-input-name" placeholder="Name">
@@ -114,7 +114,7 @@
     </div>
 </script>
 
-<script type="text/html" data-help-name="cleanup-filesystem">
+<script type="text/html" data-help-name="file-retention-manager">
     <p>A Node-RED node that deletes files older than a specified age from a given folder structure.</p>
     <p><strong>Base folder:</strong><br/>The root directory where the node starts its operations. It should be a valid path on your system.</p>
     <p><strong>Pattern Type:</strong><br/> The type of patterns to use, which can be a regular expressions or <a target="_blank" href="https://code.visualstudio.com/docs/editor/glob-patterns">glob patterns</a>.</p>
