@@ -110,12 +110,17 @@ module.exports = function(RED) {
                     const files = await fs.readdir(dir)
 
                     for (const file of files) {
-                        const filePath = path.join(dir, file)
+                        // Add the file name to the folder in a cross-platform way
+                        let filePath = path.join(dir, file)
+
+                        // Normalize and resolve the base folder path to an absolute path, because it can contain e.g. "." (= current directory) or '.." (= parent directory)
+                        filePath = path.resolve(filePath)
+
                         try {
                             const stats = await fs.stat(filePath)
 
                             if (stats.isDirectory()) {
-                                // Do a dept-first traversal, i.e. always descend into directories to allow full path filtering
+                                // Do a depth-first traversal, i.e. always descend into directories to allow full path filtering
                                 await walkDir(filePath)
 
                                 // Check if the folder is empty considering also the files that would have been deleted
@@ -134,7 +139,7 @@ module.exports = function(RED) {
                                     const now = new Date().getTime()
                                     const fileAge = (now - stats.mtime) / 1000
 
-                                    // Note: wrap the pattern in a RexExp instance, because the specified patterns e.g. don't always look like /.../
+                                    // Note: wrap the pattern in a RegExp instance, because the specified patterns e.g. don't always look like /.../
                                     if (fileAge > ageInSeconds && patterns.some(pattern => new RegExp(pattern).test(filePath))) {
                                         reportContent.files.push(filePath)
 
@@ -159,6 +164,9 @@ module.exports = function(RED) {
                     node.error(err)
                 }
             }
+
+            // Normalize and resolve the base folder path to an absolute path, because it can contain e.g. "." (= current directory) or '.." (= parent directory)
+            baseFolder = path.resolve(baseFolder)
 
             await walkDir(baseFolder)
 
