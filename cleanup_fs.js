@@ -139,7 +139,7 @@ module.exports = function(RED) {
 
                                 let folderInfo = {
                                     path: relativeFilePath,
-                                    mtime: stats.mtime,
+                                    mtime: stats.mtime.toISOString(),
                                     age: fileAge
                                 }
 
@@ -175,7 +175,7 @@ module.exports = function(RED) {
                                     if (fileAge > ageInSeconds && patterns.some(pattern => new RegExp(pattern).test(relativeFilePath))) {
                                         let fileInfo = {
                                             path: relativeFilePath,
-                                            mtime: stats.mtime,
+                                            mtime: stats.mtime.toISOString(),
                                             age: fileAge
                                         }
 
