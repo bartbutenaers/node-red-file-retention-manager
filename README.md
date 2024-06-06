@@ -29,7 +29,7 @@ Please buy my wife a coffee to keep her happy, while I am busy developing Node-R
 
 This node can be used for example to cleanup daily the video recordings of an IP camera after a month, to ensure the disk doesn't run full.  
 
-![image](https://github.com/bartbutenaers/node-red-file-retention-manager/assets/14224149/952bdb72-dd51-4d56-b0fb-87f676dcbebf)
+![image](https://github.com/bartbutenaers/node-red-file-retention-manager/assets/14224149/86bc1765-69d8-44c6-8dec-221caf5b66f0)
 
 The following example flow will remove daily the video footage that is at least one month old:
 
