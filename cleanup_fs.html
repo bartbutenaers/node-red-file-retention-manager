@@ -131,6 +131,7 @@
     </p>
     <p><strong>Dry run:</strong><br/> When selected, a test run will be executed without removing files or folders.</p>
     <p><strong>Report:</strong><br/> When selected - beside the paths - the details of the (to be) deleted files and folders will also be send in the output <code>payload.report</code>.  The details are the age (in seconds) and the mtime (i.e. last modified timestamp).</p>
+    <p>CAUTION: The <code>deletedFiles</code> and <code>deletedFolders</code> will always be <code>0</code> in the report for a dry-run, because it is the number of files and folders that are truly removed!</p>
     <p><strong>Patterns:</strong><br/> Glob/regex patterns to specify which files need to be removed.</p>
     <p>Please ensure to specify all these parameters either in the config screen or in the input message payload.</p>
 </script>
