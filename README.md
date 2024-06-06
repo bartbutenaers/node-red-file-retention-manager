@@ -29,13 +29,13 @@ Please buy my wife a coffee to keep her happy, while I am busy developing Node-R
 
 This node can be used for example to cleanup daily the video recordings of an IP camera after a month, to ensure the disk doesn't run full.  
 
-![image](https://github.com/bartbutenaers/node-red-file-retention-manager/assets/14224149/86bc1765-69d8-44c6-8dec-221caf5b66f0)
+![image](https://github.com/bartbutenaers/node-red-file-retention-manager/assets/14224149/60e57ac0-d25a-44a4-85b0-5e8e489c4e2a)
 
 The following example flow will remove daily the video footage that is at least one month old:
 
 ![image](https://github.com/bartbutenaers/node-red-file-retention-manager/assets/14224149/c995d28b-64df-4937-a591-8f1bd46fd404)
 ```
-[{"id":"807afc986d0ec286","type":"debug","z":"bfe334aca9927858","name":"Cleanup report","active":true,"tosidebar":true,"console":false,"tostatus":false,"complete":"payload","targetType":"msg","statusVal":"","statusType":"auto","x":860,"y":620,"wires":[]},{"id":"88e2b00bb7757498","type":"inject","z":"bfe334aca9927858","name":"Daily check","props":[{"p":"payload"}],"repeat":"86400","crontab":"","once":false,"onceDelay":0.1,"topic":"","payload":"","payloadType":"date","x":430,"y":620,"wires":[["3b22285a9d8f0d3f"]]},{"id":"3b22285a9d8f0d3f","type":"file-retention-manager","z":"bfe334aca9927858","name":"","baseFolder":"/media/reolink_deurbel","patternType":"glob","age":"1","ageUnit":"months","removeFolders":"none","dryRun":true,"reportDetails":true,"patterns":["**/*"],"x":640,"y":620,"wires":[["807afc986d0ec286"]]}]
+[{"id":"807afc986d0ec286","type":"debug","z":"bfe334aca9927858","name":"Cleanup report","active":true,"tosidebar":true,"console":false,"tostatus":false,"complete":"payload","targetType":"msg","statusVal":"","statusType":"auto","x":860,"y":620,"wires":[]},{"id":"88e2b00bb7757498","type":"inject","z":"bfe334aca9927858","name":"Daily check","props":[{"p":"payload"}],"repeat":"86400","crontab":"","once":false,"onceDelay":0.1,"topic":"","payload":"","payloadType":"date","x":430,"y":620,"wires":[["3b22285a9d8f0d3f"]]},{"id":"3b22285a9d8f0d3f","type":"file-retention-manager","z":"bfe334aca9927858","name":"","baseFolder":"/media/reolink_deurbel","patternType":"glob","age":"1","ageUnit":"months","removeFolders":"empty","dryRun":true,"reportDetails":true,"patterns":["**/*"],"x":640,"y":620,"wires":[["807afc986d0ec286"]],"info":""}]
 ```
 It is advised to do a ***dry-run*** first to make sure that the correct files (and folders) are being deleted!  That setting allows you to play with the other settings until the list of files and folders in the output message `payload.report` is correct. Because due to incorrect settings (or perhaps a bug in this node) important files or folders might be removed by accident.  Of course a dry-run only makes sense to be used in combination with the ***report*** setting.
 
