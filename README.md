@@ -33,9 +33,9 @@ This node can be used for example to cleanup daily the video recordings of an IP
 
 The following example flow will remove daily the video footage that is at least one month old:
 
-![image](https://github.com/bartbutenaers/node-red-cleanup-filesystem/assets/14224149/681b5dfc-e1f9-44d3-8ee6-62d02456e9f9)
+![image](https://github.com/bartbutenaers/node-red-file-retention-manager/assets/14224149/c995d28b-64df-4937-a591-8f1bd46fd404)
 ```
-[{"id":"a51d0f53ab1d49b5","type":"debug","z":"bfe334aca9927858","name":"Report cleanup","active":true,"tosidebar":true,"console":false,"tostatus":false,"complete":"payload","targetType":"msg","statusVal":"","statusType":"auto","x":860,"y":620,"wires":[]},{"id":"af30e4d327c72518","type":"inject","z":"bfe334aca9927858","name":"Monthly","props":[{"p":"payload"}],"repeat":"86400","crontab":"","once":false,"onceDelay":0.1,"topic":"","payload":"","payloadType":"date","x":440,"y":620,"wires":[["fbdb6c9bd4438cc8"]]},{"id":"fbdb6c9bd4438cc8","type":"file-retention-manager","z":"bfe334aca9927858","name":"","baseFolder":"/media/reolink_deurbel","patternType":"glob","age":"1","ageUnit":"months","removeEmptyFolders":true,"dryRun":true,"report":true,"patterns":["**/*.jpg","**/*.mp4"],"x":650,"y":620,"wires":[["a51d0f53ab1d49b5"]],"info":"We gaan dagelijks de opnames van de Reolink deurbel verwijderen die meer dan 1 maand oud zijn.\r\n\r\nBedoeling is om te zorgen dat het filesysteem niet vol loopt met oude opnames.  Deze opnames bestaan zowel uit mp4 video fragmenten, als uit jpeg snapshot afbeeldingen.\r\n\r\nDie opnames heeft de Reolink deurbel zelf gezet op de lokale folder /media/reolink_deurbel (via FTP).  De deurbel gaat zelf folders aanmaken met de volgende hierarchische structuur:\r\n```\r\n/media\r\n   /reolink_deurbel\r\n      /{jaar}\r\n         /{maand}\r\n            /{dag}\r\n               Reolink Video Doorbell Poe_00{jaar}{maand}{dag}{uur}{minuut}{seconde}.mp4\r\n               Reolink Video Doorbell Poe_00{jaar}{maand}{dag}{uur}{minuut}{seconde}.jpg\r\n```"}]
+[{"id":"807afc986d0ec286","type":"debug","z":"bfe334aca9927858","name":"Cleanup report","active":true,"tosidebar":true,"console":false,"tostatus":false,"complete":"payload","targetType":"msg","statusVal":"","statusType":"auto","x":860,"y":620,"wires":[]},{"id":"88e2b00bb7757498","type":"inject","z":"bfe334aca9927858","name":"Daily check","props":[{"p":"payload"}],"repeat":"86400","crontab":"","once":false,"onceDelay":0.1,"topic":"","payload":"","payloadType":"date","x":430,"y":620,"wires":[["3b22285a9d8f0d3f"]]},{"id":"3b22285a9d8f0d3f","type":"file-retention-manager","z":"bfe334aca9927858","name":"","baseFolder":"/media/reolink_deurbel","patternType":"glob","age":"1","ageUnit":"months","removeFolders":"none","dryRun":true,"reportDetails":true,"patterns":["**/*"],"x":640,"y":620,"wires":[["807afc986d0ec286"]]}]
 ```
 It is advised to do a ***dry-run*** first to make sure that the correct files (and folders) are being deleted!  That setting allows you to play with the other settings until the list of files and folders in the output message `payload.report` is correct. Because due to incorrect settings (or perhaps a bug in this node) important files or folders might be removed by accident.  Of course a dry-run only makes sense to be used in combination with the ***report*** setting.
 
@@ -83,9 +83,13 @@ The value from the config screen can be overwritten via `payload.age` in the inp
 
 Represents the unit of 'age', which will be used to calculate the age of files.  It should be one of the following strings: 'seconds', 'minutes', 'hours', 'days', 'weeks', 'months', or 'years'.  The value from the config screen can be overwritten via `payload.ageUnit` in the input message.
 
-### Remove empty folders
+### Remove folders
 
-When selected, empty subfolders will be removed.  Even in dry-run mode, there will be simulation to consider files that 'would' be removed as removed files, in order to determine whether a folder 'would' become empty.  
++ *Don't remove folders*: keep all folders.
++ *Remove empty folders*: only remove empty folders.
++ *Remove empty aged folders*: only remove empty folders when their age is older as specified.
+
+Even in dry-run mode, there will be simulation to consider files that 'would' be removed as removed files, in order to determine whether a folder 'would' become empty.  
 The value from the config screen can be overwritten via `payload.removeEmptyFolders` in the input message.
 
 ### Do a test run
@@ -93,10 +97,9 @@ The value from the config screen can be overwritten via `payload.removeEmptyFold
 When selected, a test run will be executed without removing files or folders.  That is of course only useful when the *"Report files and folders"* option is activated.  
 The value from the config screen can be overwritten via `payload.dryRun` in the input message.
 
-### Report files and folders
-
- When selected, the paths of the (to be) deleted files and folders will be send in the output `payload.report`.
- The value from the config screen can be overwritten via `payload.report` in the input message.
+### Report details of files and folders
+When selected the details of the (to be) deleted files and folders will also be send in the output `payload.report`.  Otherwise the report will only contain the file paths and folders, but not the other details.  Note that the paths are relative to the base folder. 
+The value from the config screen can be overwritten via `payload.report` in the input message.
 
 ### Patterns
 
