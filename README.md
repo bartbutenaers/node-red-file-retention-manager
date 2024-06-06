@@ -45,7 +45,7 @@ The report shows the (to be) deleted files and folders:
 
 When the option *"Remove empty subfolders"* is not selected, no folders will end up in the report (because no folders will be removed).
 
-The *deletedFiles* and *deletedFolder* will always be zero in the report while doing a dry-run, because it reports the number of files and folders that are truly removed.
+The *deletedFiles* and *deletedFolder* will always be ***ZERO*** in the report while doing a dry-run, because it reports the number of files and folders that are truly removed.
 
 Optionally every property can also be overwritten via the input message payload:
 ```
@@ -98,7 +98,12 @@ When selected, a test run will be executed without removing files or folders.  T
 The value from the config screen can be overwritten via `payload.dryRun` in the input message.
 
 ### Report details of files and folders
-When selected the details of the (to be) deleted files and folders will also be send in the output `payload.report`.  Otherwise the report will only contain the file paths and folders, but not the other details.  Note that the paths are relative to the base folder. 
+When selected the details of the (to be) deleted files and folders will also be send in the output `payload.report`:
++ *path*: path relative to the base folder.
++ *age*: age in seconds.
++ *mtime*: last modified timestamp (in ISO 8601 extended format, for example `2020-06-24T11:18:32.000Z`).
+
+Otherwise the report will only contain the file paths and folders, but not the other details.Note that the paths are relative to the base folder. 
 The value from the config screen can be overwritten via `payload.report` in the input message.
 
 ### Patterns
