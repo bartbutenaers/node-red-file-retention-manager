@@ -30,7 +30,7 @@ module.exports = function(RED) {
             let patternType = config.patternType
             let age = config.age
             let ageUnit = config.ageUnit
-            let removeEmptyFolders = config.removeEmptyFolders
+            let removeFolders = config.removeFolders
             let dryRun = config.dryRun
             let reportDetails = config.reportDetails
             let patterns = config.patterns
@@ -49,8 +49,10 @@ module.exports = function(RED) {
                 if (msg.payload.ageUnit !== undefined) {
                     ageUnit = msg.payload.ageUnit
                 }
-                if (msg.payload.removeEmptyFolders !== undefined) {
-                    removeEmptyFolders = msg.payload.removeEmptyFolders
+                if (msg.payload.removeFolders !== undefined) {
+                    if (['none', 'empty', 'aged'].includes(msg.payload.removeFolders)) {
+                        removeFolders = msg.payload.removeFolders
+                    }
                 }
                 if (msg.payload.dryRun !== undefined) {
                     dryRun = msg.payload.dryRun
@@ -130,25 +132,41 @@ module.exports = function(RED) {
                                 // Do a depth-first traversal, i.e. always descend into directories to allow full path filtering
                                 await walkDir(relativeFilePath)
 
-                                // Check if the folder is empty considering also the files and folders that would have been deleted
                                 const isEmpty = (await fs.readdir(absoluteFilePath)).every(fileOrFolder =>
                                     reportContent.files.some(info => path.join(relativeFilePath, fileOrFolder) === info.path) ||
                                     reportContent.folders.some(info => path.join(relativeFilePath, fileOrFolder) === info.path)
                                 )
 
-                                if (removeEmptyFolders && isEmpty) {
-                                    let folderInfo = {
-                                        path: relativeFilePath,
-                                        mtime: stats.mtime,
-                                        age: fileAge
-                                    }
+                                let folderInfo = {
+                                    path: relativeFilePath,
+                                    mtime: stats.mtime,
+                                    age: fileAge
+                                }
 
-                                    reportContent.folders.push(folderInfo)
+                                switch(removeFolders) {
+                                    case 'none':
+                                        // Keep the folder
+                                        break
+                                    case 'empty':
+                                        if (isEmpty) {
+                                            reportContent.folders.push(folderInfo)
 
-                                    if (!dryRun) {
-                                        await fs.rmdir(filePath)
-                                        deletedFolders++
-                                    }
+                                            if (!dryRun) {
+                                                await fs.rmdir(filePath)
+                                                deletedFolders++
+                                            }
+                                        }
+                                        break
+                                    case 'aged':
+                                        if (isEmpty && fileAge > ageInSeconds) {
+                                            reportContent.folders.push(folderInfo)
+
+                                            if (!dryRun) {
+                                                await fs.rmdir(filePath)
+                                                deletedFolders++
+                                            }
+                                        }
+                                        break
                                 }
                             } else {
                                 // Only delete files if their parent directory matches the patterns
