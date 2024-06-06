@@ -8,7 +8,7 @@
             patternType: {value: "glob"},
             age: {value: ""},
             ageUnit: {value: "minutes"},
-            removeEmptyFolders: {value: false},
+            removeFolders: {value: "aged"},
             dryRun: {value: true},
             reportDetails: {value: true},
             patterns: {value: ["**/*"]}
@@ -93,9 +93,12 @@
         </select>
     </div>
     <div class="form-row">
-        <label for="node-input-removeEmptyFolders"><i class="fa fa-trash"></i> Subfolders</label>
-        <input type="checkbox" id="node-input-removeEmptyFolders" style="width:auto ;border:none; vertical-align:baseline;">
-        <span for="node-input-removeEmptyFolders"> Remove empty subfolders</span>
+        <label for="node-input-removeFolders"><i class="fa fa-trash"></i> Subfolders</label>
+        <select id="node-input-removeFolders" style="width:max-content;">
+            <option value="none">Don't remove folders</option>
+            <option value="empty">Remove empty folders</option>
+            <option value="aged">Remove empty aged folders</option>
+        </select>
     </div>
     <div class="form-row">
         <label for="node-input-dryRun"><i class="fa fa-exclamation-triangle"></i> Dry run</label>
@@ -119,7 +122,13 @@
     <p><strong>Base folder:</strong><br/>The root directory where the node starts its operations. It should be a valid path on your system.</p>
     <p><strong>Pattern Type:</strong><br/> The type of patterns to use, which can be a regular expressions or <a target="_blank" href="https://code.visualstudio.com/docs/editor/glob-patterns">glob patterns</a>.</p>
     <p><strong>Age:</strong><br/> Files older than this age will be removed.</p>
-    <p><strong>Subfolders:</strong><br/> When selected, empty subfolders will be removed.</p>
+    <p><strong>Subfolders:</strong><br/> Select which subfolders need to be removed:
+        <ul>
+            <li><i>Don't remove folders</i>: keep all folders.</li>
+            <li><i>Remove empty folders</i>: only remove empty folders.</li>
+            <li><i>Remove empty aged folders</i>: only remove empty folders when their age is older as specified.</li>
+        </ul>
+    </p>
     <p><strong>Dry run:</strong><br/> When selected, a test run will be executed without removing files or folders.</p>
     <p><strong>Report:</strong><br/> When selected - beside the paths - the details of the (to be) deleted files and folders will also be send in the output <code>payload.report</code>.</p>
     <p><strong>Patterns:</strong><br/> Glob/regex patterns to specify which files need to be removed.</p>
