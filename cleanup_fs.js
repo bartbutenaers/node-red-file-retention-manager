@@ -38,29 +38,79 @@ module.exports = function(RED) {
             // All the config properties can be overwritten by input msg properties
             if (msg.payload && typeof msg.payload === 'object') {
                 if (msg.payload.baseFolder !== undefined) {
+                    if (typeof msg.payload.baseFolder !== 'string' && !(msg.payload.baseFolder instanceof String)) {
+                        node.error("The msg.payload.baseFolder should be a string.")
+                        resetStatus()
+                        return
+                    }
+
                     baseFolder = msg.payload.baseFolder
                 }
                 if (msg.payload.patternType !== undefined) {
+                    if (!['glob', 'regex'].includes(msg.payload.patternType)) {
+                        node.error("The msg.payload.patternType should be a 'glob' or 'regex'.")
+                        resetStatus()
+                        return
+                    }
+
                     patternType = msg.payload.patternType
                 }
                 if (msg.payload.age !== undefined) {
+                    if (!Number.isInteger(msg.payload.age)) {
+                        node.error("The msg.payload.age should be an integer number.")
+                        resetStatus()
+                        return
+                    }
+
                     age = msg.payload.age
                 }
                 if (msg.payload.ageUnit !== undefined) {
+                    if (!['minutes', 'hours', 'days', 'weeks', 'months', 'years'].includes(msg.payload.ageUnit)) {
+                        node.error("The msg.payload.ageUnit should be 'minutes', 'hours', 'days', 'weeks', 'months' or 'years'.")
+                        resetStatus()
+                        return
+                    }
+
                     ageUnit = msg.payload.ageUnit
                 }
+
                 if (msg.payload.removeFolders !== undefined) {
-                    if (['none', 'empty', 'aged'].includes(msg.payload.removeFolders)) {
-                        removeFolders = msg.payload.removeFolders
+                    if (!['none', 'empty', 'aged'].includes(msg.payload.removeFolders)) {
+                        node.error("The msg.payload.removeFolders should be 'none', 'empty' or 'aged'.")
+                        resetStatus()
+                        return
                     }
+
+                    removeFolders = msg.payload.removeFolders
                 }
+
                 if (msg.payload.dryRun !== undefined) {
+                    if (typeof msg.payload.removeFolders !== "boolean") {
+                        node.error("The msg.payload.dryRun should be a boolean.")
+                        resetStatus()
+                        return
+                    }
+
                     dryRun = msg.payload.dryRun
                 }
+
                 if (msg.payload.reportDetails !== undefined) {
+                    if (typeof msg.payload.reportDetails !== "boolean") {
+                        node.error("The msg.payload.reportDetails should be a boolean.")
+                        resetStatus()
+                        return
+                    }
+
                     reportDetails = msg.payload.reportDetails
                 }
-                if (msg.payload.patterns !== undefined && Array.isArray(msg.payload.patterns) && msg.payload.patterns.length > 0) {
+
+                if (msg.payload.patterns !== undefined) {
+                    if (!Array.isArray(msg.payload.patterns) || msg.payload.patterns.length == 0) {
+                        node.error("The msg.payload.patterns should be an array.")
+                        resetStatus()
+                        return
+                    }
+
                     patterns = msg.payload.patterns
                 }
             }
