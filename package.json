@@ -19,7 +19,7 @@
     "bugs": {
         "url": "https://github.com/bartbutenaers/node-red-file-retention-manager/issues"
     },
-    "homepage": "https://github.com/bartbutenaers/node-red-file-retention-managerg",
+    "homepage": "https://github.com/bartbutenaers/node-red-file-retention-manager",
     "repository": {
         "type": "git",
         "url": "https://github.com/bartbutenaers/node-red-file-retention-manager.git"
