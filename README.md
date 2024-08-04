@@ -45,7 +45,7 @@ The report shows the (to be) deleted files and folders:
 
 When the option *"Remove empty subfolders"* is not selected, no folders will end up in the report (because no folders will be removed).
 
-The *deletedFiles* and *deletedFolder* will always be ***ZERO*** in the report while doing a dry-run, because it reports the number of files and folders that are truly removed.
+The *deletedFiles* and *deletedFolder* during a dry-run contain the number of files and folders that would have been removed (if no dry run would have been selected).
 
 Optionally every property can also be overwritten via the input message payload:
 ```
