@@ -144,8 +144,6 @@ module.exports = function(RED) {
             // Normalize and resolve the base folder path to an absolute path, because it can contain e.g. "." (= current directory) or '.." (= parent directory)
             baseFolder = path.resolve(baseFolder)
 
-            let deletedFiles = 0
-            let deletedFolders = 0
             let reportContent = {
                 baseFolder: baseFolder,
                 files: [],
@@ -161,34 +159,35 @@ module.exports = function(RED) {
                 'years': age * 60 * 60 * 24 * 365
             }[ageUnit]
 
-            async function walkDir(relativeFolder) {
+            async function walkFolder(relativeFolder) {
                 try {
                     let absoluteFolder = path.join(baseFolder, relativeFolder)
 
-                    const files = await fs.readdir(absoluteFolder)
+                    // Get the content of the (relative) folder, which can be files and or subfolders
+                    const filesFolders = await fs.readdir(absoluteFolder)
 
-                    for (const file of files) {
+                    for (const fileFolder of filesFolders) {
                         // Add the file name to the folder in a cross-platform way
-                        let relativeFilePath = path.join(relativeFolder, file)
-                        let absoluteFilePath = path.join(absoluteFolder, file)
+                        let relativePath = path.join(relativeFolder, fileFolder)
+                        let absolutePath = path.join(absoluteFolder, fileFolder)
 
                         try {
-                            const stats = await fs.stat(absoluteFilePath)
+                            const stats = await fs.stat(absolutePath)
 
                             const now = new Date().getTime()
                             const fileAge = Math.round((now - stats.mtime) / 1000)
 
                             if (stats.isDirectory()) {
                                 // Do a depth-first traversal, i.e. always descend into directories to allow full path filtering
-                                await walkDir(relativeFilePath)
+                                await walkFolder(relativePath)
 
-                                const isEmpty = (await fs.readdir(absoluteFilePath)).every(fileOrFolder =>
-                                    reportContent.files.some(info => path.join(relativeFilePath, fileOrFolder) === info.path) ||
-                                    reportContent.folders.some(info => path.join(relativeFilePath, fileOrFolder) === info.path)
+                                const isEmpty = (await fs.readdir(absolutePath)).every(fileOrFolder =>
+                                    reportContent.files.some(info => path.join(relativePath, fileOrFolder) === info.path) ||
+                                    reportContent.folders.some(info => path.join(relativePath, fileOrFolder) === info.path)
                                 )
 
                                 let folderInfo = {
-                                    path: relativeFilePath,
+                                    path: relativePath,
                                     mtime: stats.mtime.toISOString(),
                                     age: fileAge
                                 }
@@ -202,8 +201,7 @@ module.exports = function(RED) {
                                             reportContent.folders.push(folderInfo)
 
                                             if (!dryRun) {
-                                                await fs.rmdir(filePath)
-                                                deletedFolders++
+                                                await fs.rmdir(absolutePath)
                                             }
                                         }
                                         break
@@ -212,8 +210,7 @@ module.exports = function(RED) {
                                             reportContent.folders.push(folderInfo)
 
                                             if (!dryRun) {
-                                                await fs.rmdir(filePath)
-                                                deletedFolders++
+                                                await fs.rmdir(absolutePath)
                                             }
                                         }
                                         break
@@ -222,9 +219,9 @@ module.exports = function(RED) {
                                 // Only delete files if their parent directory matches the patterns
                                 try {
                                     // Note: wrap the pattern in a RegExp instance, because the specified patterns e.g. don't always look like /.../
-                                    if (fileAge > ageInSeconds && patterns.some(pattern => new RegExp(pattern).test(relativeFilePath))) {
+                                    if (fileAge > ageInSeconds && patterns.some(pattern => new RegExp(pattern).test(relativePath))) {
                                         let fileInfo = {
-                                            path: relativeFilePath,
+                                            path: relativePath,
                                             mtime: stats.mtime.toISOString(),
                                             age: fileAge
                                         }
@@ -233,8 +230,7 @@ module.exports = function(RED) {
 
                                         if (!dryRun) {
                                             try {
-                                                await fs.unlink(filePath)
-                                                deletedFiles++
+                                                await fs.unlink(absolutePath)
                                             } catch (err) {
                                                 node.error(err)
                                             }
@@ -253,12 +249,7 @@ module.exports = function(RED) {
                 }
             }
 
-            await walkDir('')
-
-            msg.payload = {
-                deletedFiles: deletedFiles,
-                deletedFolders: deletedFolders
-            }
+            await walkFolder('')
 
             if (!reportDetails) {
                 // Only keep the paths when no details should be reported
@@ -266,7 +257,11 @@ module.exports = function(RED) {
                 reportContent.files = reportContent.files.map(obj => obj.path)
             }
 
-            msg.payload.report = reportContent
+            msg.payload = {
+                deletedFiles: reportContent.files.length,
+                deletedFolders: reportContent.folders.length,
+                report: reportContent
+            }
 
             node.send(msg)
 
